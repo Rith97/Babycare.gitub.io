@@ -1,0 +1,5 @@
+{
+  "name": "BabyCare Web",
+  "description": "A comprehensive Progressive Web App (PWA) to track and manage your baby's daily activities, including feeding, sleep, health, vaccinations, and more. Features multi-baby profiles, data analytics, and an AI-powered knowledge base.",
+  "requestFramePermissions": []
+}
