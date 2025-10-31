@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { FeedRecord, SleepRecord } from '../types';
+import { FeedRecord, SleepRecord, HealthRecord } from '../types';
 
 // FIX: Declare the Recharts property on the global Window object to fix TypeScript error.
 // This is necessary because Recharts is likely loaded from a script tag, not as an ES module.
@@ -14,9 +14,10 @@ declare global {
 interface AnalyticsPanelProps {
   feedRecords: FeedRecord[];
   sleepRecords: SleepRecord[];
+  healthRecords: HealthRecord[];
 }
 
-const COLORS = ['#6366f1', '#ec4899', '#8b5cf6', '#10b981'];
+const COLORS = ['#6366f1', '#ec4899', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -34,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ feedRecords, sleepRecords }) => {
+const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ feedRecords, sleepRecords, healthRecords }) => {
   const feedByDay = useMemo(() => {
     const data: { [key: string]: number } = {};
     feedRecords.forEach(r => {
@@ -65,6 +66,15 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ feedRecords, sleepRecor
     return Object.entries(data).map(([name, value]) => ({ name, value }));
   }, [feedRecords]);
 
+  const healthTypeDistribution = useMemo(() => {
+    const data: { [key: string]: number } = {};
+    healthRecords.forEach(r => {
+        if (!data[r.type]) data[r.type] = 0;
+        data[r.type]++;
+    });
+    return Object.entries(data).map(([name, value]) => ({ name, value }));
+  }, [healthRecords]);
+
   // Check if Recharts is loaded.
   if (!window.Recharts) {
     return (
@@ -82,7 +92,7 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ feedRecords, sleepRecor
       <h3 className="text-xl sm:text-2xl font-bold mb-6">📊 ក្រាហ្វវិភាគ</h3>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        <div className="col-span-1 lg:col-span-2">
+        <div>
             <h4 className="text-xl font-semibold mb-4 text-center">បរិមាណបំបៅប្រចាំថ្ងៃ (ml)</h4>
             {feedRecords.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
@@ -119,13 +129,29 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({ feedRecords, sleepRecor
              {feedRecords.length > 0 ? (
                 <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
-                    <Pie data={feedTypeDistribution} cx="50%" cy="50%" labelLine={false} outerRadius={100} fill="#8884d8" dataKey="value" nameKey="name" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                    <Pie data={feedTypeDistribution} cx="50%" cy="50%" labelLine={false} outerRadius={100} fill="#8884d8" dataKey="value" nameKey="name" label={({ percent }) => `${(percent * 100).toFixed(0)}%`}>
                         {feedTypeDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
                     <Tooltip />
+                    <Legend />
                     </PieChart>
                 </ResponsiveContainer>
              ) : <p className="text-center text-gray-500 p-8">គ្មានទិន្នន័យបំបៅ</p>}
+        </div>
+
+        <div>
+            <h4 className="text-xl font-semibold mb-4 text-center">ប្រភេទព្រឹត្តិការណ៍សុខភាព</h4>
+             {healthRecords.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                    <Pie data={healthTypeDistribution} cx="50%" cy="50%" labelLine={false} outerRadius={100} fill="#8884d8" dataKey="value" nameKey="name" label={({ percent }) => `${(percent * 100).toFixed(0)}%`}>
+                        {healthTypeDistribution.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />)}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+             ) : <p className="text-center text-gray-500 p-8">គ្មានទិន្នន័យសុខភាព</p>}
         </div>
 
       </div>

@@ -273,7 +273,7 @@ const App: React.FC = () => {
                 <div className={activeTab === 'vax' ? '' : 'hidden'}><VaccinationPanel babyDob={activeProfile.dob} completedVax={data.completedVax[activeProfile.id] || {}} onToggleVax={toggleVax} /></div>
                 <div className={activeTab === 'reminders' ? '' : 'hidden'}><RemindersPanel reminders={data.reminders} onAdd={addReminder} onDelete={deleteReminder} onToggle={toggleReminder} /></div>
                 <div className={activeTab === 'knowledge' ? '' : 'hidden'}><KnowledgePanel /></div>
-                <div className={activeTab === 'analytics' ? '' : 'hidden'}><AnalyticsPanel feedRecords={data.feedRecords[activeProfile.id] || []} sleepRecords={data.sleepRecords[activeProfile.id] || []} /></div>
+                <div className={activeTab === 'analytics' ? '' : 'hidden'}><AnalyticsPanel feedRecords={data.feedRecords[activeProfile.id] || []} sleepRecords={data.sleepRecords[activeProfile.id] || []} healthRecords={data.healthRecords[activeProfile.id] || []} /></div>
             </div>
         )}
       </main>
